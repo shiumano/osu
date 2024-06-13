@@ -2,6 +2,7 @@
 // See the LICENCE file in the repository root for full licence text.
 
 using System.Linq;
+using System.Threading.Tasks;
 using osu.Framework.Allocation;
 using osu.Framework.Screens;
 using osu.Game.Beatmaps;
@@ -15,6 +16,8 @@ namespace osu.Game.Screens.Edit.GameplayTest
     {
         private readonly Editor editor;
         private readonly EditorState editorState;
+
+        private ResumeOverlay? editorResumeOverlay;
 
         protected override UserActivity InitialActivity => new UserActivity.TestingBeatmap(Beatmap.Value.BeatmapInfo);
 
@@ -43,6 +46,9 @@ namespace osu.Game.Screens.Edit.GameplayTest
         protected override void LoadComplete()
         {
             base.LoadComplete();
+            
+            editorResumeOverlay = new DelayedResumeOverlay { ResumeAction = GameplayClockContainer.Start };
+            GameplayClockContainer.Add(editorResumeOverlay);
             ScoreProcessor.HasCompleted.BindValueChanged(completed =>
             {
                 if (completed.NewValue)
@@ -71,6 +77,10 @@ namespace osu.Game.Screens.Edit.GameplayTest
             // the finish calls are purposefully not propagated to children to avoid messing up their state.
             FinishTransforms();
             GameplayClockContainer.FinishTransforms(false, nameof(Alpha));
+
+            GameplayClockContainer.Start();
+            GameplayClockContainer.Stop();
+            editorResumeOverlay?.Show();
         }
 
         public override bool OnExiting(ScreenExitEvent e)
