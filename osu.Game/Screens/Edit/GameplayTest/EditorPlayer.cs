@@ -78,8 +78,6 @@ namespace osu.Game.Screens.Edit.GameplayTest
             FinishTransforms();
             GameplayClockContainer.FinishTransforms(false, nameof(Alpha));
 
-            GameplayClockContainer.Start();
-            GameplayClockContainer.Stop();
             editorResumeOverlay?.Show();
         }
 
