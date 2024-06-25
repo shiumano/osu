@@ -19,7 +19,10 @@ namespace osu.Game.Rulesets.Taiko.Mods
         public override void ApplyToDifficulty(BeatmapDifficulty difficulty)
         {
             base.ApplyToDifficulty(difficulty);
-            difficulty.SliderMultiplier *= slider_multiplier;
+
+            double slider_ratio = DifficultyChange.Value * slider_multiplier / 0.5; // Multiplier factor added to the scrolling speed. The original ratio will be retained.
+
+            difficulty.SliderMultiplier *= slider_ratio;
         }
     }
 }

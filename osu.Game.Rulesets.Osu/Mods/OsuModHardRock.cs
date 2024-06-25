@@ -28,8 +28,11 @@ namespace osu.Game.Rulesets.Osu.Mods
         {
             base.ApplyToDifficulty(difficulty);
 
-            difficulty.CircleSize = Math.Min(difficulty.CircleSize * 1.3f, 10.0f); // CS uses a custom 1.3 ratio.
-            difficulty.ApproachRate = Math.Min(difficulty.ApproachRate * ADJUST_RATIO, 10.0f);
+            float ratio = (float)DifficultyChange.Value;
+            float cs_ratio = ratio * 1.3f / 1.4f; // CS used a custom 1.3 ratio. The original ratio will be retained.
+
+            difficulty.CircleSize = Math.Min(difficulty.CircleSize * cs_ratio, 10.0f);
+            difficulty.ApproachRate = Math.Min(difficulty.ApproachRate * ratio, 10.0f);
         }
     }
 }

@@ -2,10 +2,13 @@
 // See the LICENCE file in the repository root for full licence text.
 
 using System;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Localisation;
 using osu.Game.Beatmaps;
+using osu.Game.Configuration;
 using osu.Game.Graphics;
+using osu.Game.Overlays.Settings;
 
 namespace osu.Game.Rulesets.Mods
 {
@@ -19,7 +22,13 @@ namespace osu.Game.Rulesets.Mods
         public override Type[] IncompatibleMods => new[] { typeof(ModEasy), typeof(ModDifficultyAdjust) };
         public override bool Ranked => UsesDefaultConfiguration;
 
-        protected const float ADJUST_RATIO = 1.4f;
+        [SettingSource("Difficulty multiplier", "The actual increase to apply", SettingControlType = typeof(MultiplierSettingsSlider))]
+        public BindableNumber<double> DifficultyChange { get; } = new BindableDouble(1.4)
+        {
+            MinValue = 1.01,
+            MaxValue = 2.00,
+            Precision = 0.01,
+        };
 
         public void ReadFromDifficulty(IBeatmapDifficultyInfo difficulty)
         {
@@ -27,8 +36,9 @@ namespace osu.Game.Rulesets.Mods
 
         public virtual void ApplyToDifficulty(BeatmapDifficulty difficulty)
         {
-            difficulty.DrainRate = Math.Min(difficulty.DrainRate * ADJUST_RATIO, 10.0f);
-            difficulty.OverallDifficulty = Math.Min(difficulty.OverallDifficulty * ADJUST_RATIO, 10.0f);
+            float ratio = (float)DifficultyChange.Value;
+            difficulty.DrainRate = Math.Min(difficulty.DrainRate * ratio, 10.0f);
+            difficulty.OverallDifficulty = Math.Min(difficulty.OverallDifficulty * ratio, 10.0f);
         }
     }
 }
