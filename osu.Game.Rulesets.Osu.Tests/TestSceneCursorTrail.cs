@@ -1,8 +1,6 @@
 // Copyright (c) ppy Pty Ltd <contact@ppy.sh>. Licensed under the MIT Licence.
 // See the LICENCE file in the repository root for full licence text.
 
-#nullable disable
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -30,12 +28,12 @@ namespace osu.Game.Rulesets.Osu.Tests
     public partial class TestSceneCursorTrail : OsuTestScene
     {
         [Resolved]
-        private IRenderer renderer { get; set; }
+        private IRenderer renderer { get; set; } = null!;
 
         [Test]
         public void TestSmoothCursorTrail()
         {
-            Container scalingContainer = null;
+            Container scalingContainer = null!;
 
             createTest(() => scalingContainer = new Container
             {
@@ -152,9 +150,9 @@ namespace osu.Game.Rulesets.Osu.Tests
                 RelativeSizeAxes = Axes.Both;
             }
 
-            public Drawable GetDrawableComponent(ISkinComponentLookup lookup) => null;
+            public Drawable? GetDrawableComponent(ISkinComponentLookup lookup) => null;
 
-            public Texture GetTexture(string componentName, WrapMode wrapModeS, WrapMode wrapModeT)
+            public Texture? GetTexture(string componentName, WrapMode wrapModeS, WrapMode wrapModeT)
             {
                 switch (componentName)
                 {
@@ -171,9 +169,11 @@ namespace osu.Game.Rulesets.Osu.Tests
                 return null;
             }
 
-            public ISample GetSample(ISampleInfo sampleInfo) => null;
+            public ISample? GetSample(ISampleInfo sampleInfo) => null;
 
-            public IBindable<TValue> GetConfig<TLookup, TValue>(TLookup lookup)
+            public IBindable<TValue>? GetConfig<TLookup, TValue>(TLookup lookup)
+                where TLookup : notnull
+                where TValue : notnull
             {
                 switch (lookup)
                 {
@@ -187,7 +187,7 @@ namespace osu.Game.Rulesets.Osu.Tests
                 return null;
             }
 
-            public ISkin FindProvider(Func<ISkin, bool> lookupFunction) => lookupFunction(this) ? this : null;
+            public ISkin? FindProvider(Func<ISkin, bool> lookupFunction) => lookupFunction(this) ? this : null;
 
             public IEnumerable<ISkin> AllSources => new[] { this };
 
@@ -221,7 +221,7 @@ namespace osu.Game.Rulesets.Osu.Tests
 
         private partial class LegacyRotatingCursorTrail : LegacyCursorTrail
         {
-            public LegacyRotatingCursorTrail([NotNull] ISkin skin)
+            public LegacyRotatingCursorTrail(ISkin skin)
                 : base(skin)
             {
             }
