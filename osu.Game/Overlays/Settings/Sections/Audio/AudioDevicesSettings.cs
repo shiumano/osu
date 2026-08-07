@@ -25,6 +25,7 @@ namespace osu.Game.Overlays.Settings.Sections.Audio
         private AudioDeviceDropdown dropdown = null!;
 
         private FormCheckBox? legacyAudio;
+        private FormCheckBox? aaudioExperimental;
 
         [BackgroundDependencyLoader]
         private void load()
@@ -48,6 +49,21 @@ namespace osu.Game.Overlays.Settings.Sections.Audio
                 });
 
                 legacyAudio.Current.ValueChanged += _ => onDeviceChanged(string.Empty);
+            }
+
+            if (RuntimeInfo.OS == RuntimeInfo.Platform.Android)
+            {
+                Add(new SettingsItemV2(aaudioExperimental = new FormCheckBox
+                {
+                    Caption = @"Use experimental audio mode",
+                    HintText = @"This will attempt to initialise the audio engine in a lower latency mode. IMPORTANT: Sound will disappear from the screen capture!",
+                    Current = audio.UseExperimentalAAudioExclusive,
+                })
+                {
+                    Keywords = new[] { "aaudio", "latency", "exclusive" },
+                });
+
+                aaudioExperimental.Current.ValueChanged += _ => onDeviceChanged(string.Empty);
             }
 
             audio.OnNewDevice += onDeviceChanged;
