@@ -6,11 +6,14 @@ using System.Linq;
 using Android.App;
 using Android.Content.PM;
 using Microsoft.Maui.Devices;
+using osu.Android.Performance;
+using osu.Framework;
 using osu.Framework.Allocation;
 using osu.Framework.Development;
 using osu.Framework.Extensions.ObjectExtensions;
 using osu.Framework.Platform;
 using osu.Game;
+using osu.Game.Performance;
 using osu.Game.Screens;
 using osu.Game.Updater;
 using osu.Game.Utils;
@@ -26,6 +29,8 @@ namespace osu.Android
         private readonly PackageInfo packageInfo;
 
         public override Vector2 ScalingContainerTargetDrawSize => new Vector2(1024, 1024 * DrawHeight / DrawWidth);
+
+        private DependencyContainer? dependencies;
 
         public OsuGameAndroid(OsuGameActivity activity)
             : base(null)
@@ -47,11 +52,23 @@ namespace osu.Android
 
         public override Version AssemblyVersion => new Version(packageInfo.VersionName.AsNonNull().Split('-').First());
 
+        [BackgroundDependencyLoader]
+        private void load()
+        {
+            if (RuntimeInfo.IsCoreCLR)
+            {
+                dependencies?.CacheAs<IHighPerformanceSessionManager>(new AndroidHighPerformanceSessionManager());
+            }
+        }
+
         protected override void LoadComplete()
         {
             base.LoadComplete();
             UserPlayingState.BindValueChanged(_ => updateOrientation());
         }
+
+        protected override IReadOnlyDependencyContainer CreateChildDependencies(IReadOnlyDependencyContainer parent) =>
+            dependencies = new DependencyContainer(base.CreateChildDependencies(parent));
 
         protected override void ScreenChanged(IOsuScreen? current, IOsuScreen? newScreen)
         {
