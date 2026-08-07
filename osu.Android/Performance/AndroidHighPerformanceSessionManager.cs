@@ -22,7 +22,7 @@ namespace osu.Android.Performance
         public IDisposable BeginSession()
         {
             enterSession();
-            return new InvokeOnDisposal<HighPerformanceSessionManager>(this, static m => m.exitSession());
+            return new InvokeOnDisposal<AndroidHighPerformanceSessionManager>(this, static m => m.exitSession());
         }
 
         private void enterSession()
