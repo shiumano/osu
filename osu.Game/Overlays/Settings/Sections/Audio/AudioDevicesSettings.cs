@@ -57,10 +57,10 @@ namespace osu.Game.Overlays.Settings.Sections.Audio
                 {
                     Caption = @"Use experimental audio mode",
                     HintText = @"This will attempt to initialise the audio engine in a lower latency mode. IMPORTANT: Sound will disappear from the screen capture!",
-                    Current = audio.UseExperimentalAAudioExclusive,
+                    Current = audio.UseExperimentalAAudioMmap,
                 })
                 {
-                    Keywords = new[] { "aaudio", "latency", "exclusive" },
+                    Keywords = new[] { "aaudio", "latency" },
                 });
 
                 aaudioExperimental.Current.ValueChanged += _ => onDeviceChanged(string.Empty);
